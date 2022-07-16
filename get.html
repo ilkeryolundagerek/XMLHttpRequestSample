@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    Size: <select id="size" onchange="size_selected()">
+        <option value="3" selected>3</option>
+        <option value="4">4</option>
+        <option value="6">6</option>
+    </select>
+    <dl>
+        <dt>Page:</dt>
+        <dd id="page"></dd>
+
+        <dt>Per Page:</dt>
+        <dd id="ppage"></dd>
+
+        <dt>Total Pages:</dt>
+        <dd id="tpages"></dd>
+
+        <dt>Total:</dt>
+        <dd id="total"></dd>
+
+        <dt>Data:</dt>
+        <dd><ul id="demo"></ul></dd>
+    </dl>
+   Page: <p id="pages"></p>
+    <script>
+        //function get_data()
+        var get_data = (p=1,pp=6) => {
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        //Sonuç burada işlenecek
+                        console.log(this.responseText);
+                        let res = JSON.parse(this.responseText)
+                        console.log(res);
+                        document.getElementById("demo").innerHTML = res["data"].map(x => `<li>${x['id']}: ${x['first_name']} ${x['last_name']}</li>`).join("");
+
+                        document.getElementById("page").innerText = res["page"];
+                        document.getElementById("ppage").innerText = res["per_page"];
+                        document.getElementById("total").innerText = res["total"];
+                        document.getElementById("tpages").innerText = res["total_pages"];
+
+                        document.getElementById("pages").innerHTML = "";
+                        for (let i = 1; i <= res["total_pages"]; i++) {
+                            document.getElementById("pages").innerHTML += `<a href='#' onclick='page_selected(${i})'>${i}</a> `; 
+                        }
+                    }
+                }
+            }
+            xhr.open("GET", `https://reqres.in/api/users?page=${p}&per_page=${pp}`, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send();
+        }
+
+        let s = document.getElementById("size").value;
+        get_data(1,s);
+
+        var size_selected = () =>{
+            let s = document.getElementById("size").value;
+            get_data(1,s);
+        }
+
+        var page_selected = (p) =>{
+            let s = document.getElementById("size").value;
+            get_data(p,s);
+        }
+    </script>
+</body>
+
+</html>
