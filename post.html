@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    Name: <input id="n" placeholder="Name" type="text" /><br />
+    Job: <input id="j" placeholder="Job" type="text" /><br />
+    <button type="button" onclick="post_item()">Gönder</button>
+    <script>
+        var post_item = () => {
+            let n = document.getElementById("n").value;
+            let j = document.getElementById("j").value;
+            let payload = {
+                "name":n,
+                "job":j
+            };
+            let payload_str = JSON.stringify(payload);
+            console.log(payload_str);
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 201) {
+                        //Sonuç burada işlenecek
+                       console.log(this.responseText);
+                    }
+                }
+            }
+            xhr.open("POST", `https://reqres.in/api/users`, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(payload_str);
+        }
+    </script>
+</body>
+</html>

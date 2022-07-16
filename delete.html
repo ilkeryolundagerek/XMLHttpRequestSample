@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
     Size: <select id="size" onchange="size_selected()">
         <option value="3" selected>3</option>
@@ -27,12 +28,14 @@
         <dd id="total"></dd>
 
         <dt>Data:</dt>
-        <dd><ul id="demo"></ul></dd>
+        <dd>
+            <ul id="demo"></ul>
+        </dd>
     </dl>
-   Page: <p id="pages"></p>
+    Page: <p id="pages"></p>
     <script>
         //function get_data()
-        var get_data = (p=1,pp=6) => {
+        var get_data = (p = 1, pp = 6) => {
             let xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (this.readyState == 4) {
@@ -41,7 +44,9 @@
                         console.log(this.responseText);
                         let res = JSON.parse(this.responseText)
                         console.log(res);
-                        document.getElementById("demo").innerHTML = res["data"].map(x => `<li>${x['id']}: ${x['first_name']} ${x['last_name']}</li>`).join("");
+                        document.getElementById("demo").innerHTML = res["data"].map(x =>
+                            `<li>${x['id']}: ${x['first_name']} ${x['last_name']} <a href="#" onclick="delete_item(${x['id']})">Sil</a></li>`
+                        ).join("");
 
                         document.getElementById("page").innerText = res["page"];
                         document.getElementById("ppage").innerText = res["per_page"];
@@ -50,7 +55,7 @@
 
                         document.getElementById("pages").innerHTML = "";
                         for (let i = 1; i <= res["total_pages"]; i++) {
-                            document.getElementById("pages").innerHTML += `<a href='#' onclick='page_selected(${i})'>${i}</a> `; 
+                            document.getElementById("pages").innerHTML += `<a href='#' onclick='page_selected(${i})'>${i}</a> `;
                         }
                     }
                 }
@@ -60,18 +65,34 @@
             xhr.send();
         }
 
+        var delete_item = (id) => {
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 204) {
+                        //Sonuç burada işlenecek
+                       alert(`Veri silindi... (https://reqres.in/api/users/${id})"`)
+                    }
+                }
+            }
+            xhr.open("DELETE", `https://reqres.in/api/users/${id}`, true);
+            xhr.send();
+        }
+
         let s = document.getElementById("size").value;
-        get_data(1,s);
+        get_data(1, s);
 
-        var size_selected = () =>{
+        var size_selected = () => {
             let s = document.getElementById("size").value;
-            get_data(1,s);
+            get_data(1, s);
         }
 
-        var page_selected = (p) =>{
+        var page_selected = (p) => {
             let s = document.getElementById("size").value;
-            get_data(p,s);
+            get_data(p, s);
         }
+
+
     </script>
 </body>
 
